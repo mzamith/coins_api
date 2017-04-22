@@ -60,7 +60,7 @@ func getTotalConversion(w http.ResponseWriter, r *http.Request) {
 	var total float64
 	for i := 0; i < len(coins); i++ {
 
-		conversion := Conversion{coins[i].Coin, to}
+		conversion := Conversion{coins[i].coin, to}
 
 		t := getTax(&conversion)
 		rate := strings.Split(t, ",")[1]
@@ -70,8 +70,8 @@ func getTotalConversion(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 
-		fmt.Println("Rate for "+coins[i].Coin+" is ", c)
-		total = total + c*coins[i].Value
+		fmt.Println("Rate for "+coins[i].coin+" is ", c)
+		total = total + c*coins[i].value
 	}
 
 	fmt.Println("---------------------")

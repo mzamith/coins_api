@@ -8,8 +8,8 @@ type Conversion struct {
 type Conversions []Conversion
 
 type Currency struct {
-	Coin  string  `json: "coin"`
-	Value float64 `json: "value"`
+	coin  string  `json: "coin"`
+	value float64 `json: "value"`
 }
 
 type Currencies []Currency
