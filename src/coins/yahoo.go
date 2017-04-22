@@ -9,14 +9,14 @@ import (
 
 const mainUrl string = "http://download.finance.yahoo.com/d/quotes?f=sl1d1t1&s="
 
-func getTax(conversion *Conversion) string {
+func getTax(conversion *Conversion) (string, error) {
 
 	url := mainUrl + conversion.ConvertFrom + conversion.ConvertTo + "=X"
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Fatal("NewRequest: ", err)
-		return ""
+		return "", fmt.Errorf("Error creating request")
 	}
 
 	client := &http.Client{}
@@ -24,7 +24,7 @@ func getTax(conversion *Conversion) string {
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Fatal("Do: ", err)
-		return ""
+		return "", fmt.Errorf("Error creating request")
 	}
 
 	defer resp.Body.Close()
@@ -34,5 +34,5 @@ func getTax(conversion *Conversion) string {
 
 	fmt.Println("Response From YAHOO: ", response)
 
-	return response
+	return response, nil
 }

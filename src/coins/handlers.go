@@ -19,7 +19,15 @@ func getRate(w http.ResponseWriter, r *http.Request) {
 	conversion.ConvertFrom = parameters["from"][0]
 	conversion.ConvertTo = parameters["to"][0]
 
-	t := getTax(&conversion)
+	t, err := getTax(&conversion)
+
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(500) // bad request
+		if err := json.NewEncoder(w).Encode(err); err != nil {
+			panic(err)
+		}
+	}
 
 	w.Header().Set("Content-Type", "text/plain; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -62,7 +70,17 @@ func getTotalConversion(w http.ResponseWriter, r *http.Request) {
 
 		conversion := Conversion{coins[i].coin, to}
 
-		t := getTax(&conversion)
+		t, err := getTax(&conversion)
+
+		if err != nil {
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(500) // bad request
+			if err := json.NewEncoder(w).Encode(err); err != nil {
+				panic(err)
+			}
+			break
+		}
+
 		rate := strings.Split(t, ",")[1]
 
 		c, err := strconv.ParseFloat(rate, 64)
@@ -85,6 +103,8 @@ func getTotalConversion(w http.ResponseWriter, r *http.Request) {
 	//6. Create and send response
 	response := Currency{to, total}
 	if err := json.NewEncoder(w).Encode(response); err != nil {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(500) // server error
 		panic(err)
 	}
 }
